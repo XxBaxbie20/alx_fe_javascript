@@ -26,13 +26,15 @@
 <body>
     <h1>Dynamic Quote Generator</h1>
 
-    <!-- Category Filter -->
-    <h2>Filter Quotes by Category</h2>
-    <select id="categoryFilter" onchange="filterQuotes()">
-        <option value="all">All Categories</option>
-    </select>
+    <!-- Filter by Category -->
+    <div>
+        <h2>Filter Quotes by Category</h2>
+        <select id="categoryFilter">
+            <option value="all">All Categories</option>
+        </select>
+    </div>
 
-    <!-- Quote Display -->
+    <!-- Display Quote -->
     <div id="quoteDisplay">Click "Show New Quote" to see a quote!</div>
     <button id="newQuote">Show New Quote</button>
 
@@ -44,10 +46,15 @@
         <button id="addQuoteBtn">Add Quote</button>
     </div>
 
-    <!-- Manage Quotes -->
+    <!-- Export / Import -->
     <h2>Manage Quotes</h2>
     <button id="exportBtn">Export Quotes (JSON)</button>
     <input type="file" id="importFile" accept=".json" />
+
+    <!-- Sync with Server -->
+    <h2>Sync with Server</h2>
+    <button id="syncBtn">Sync Now</button>
+    <p><em>Quotes will also automatically sync every 30 seconds.</em></p>
 
     <script src="script.js"></script>
 </body>

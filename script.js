@@ -14,6 +14,7 @@ const newQuoteCategory = document.getElementById('newQuoteCategory');
 const exportBtn = document.getElementById('exportBtn');
 const importFile = document.getElementById('importFile');
 const categoryFilter = document.getElementById('categoryFilter');
+const syncBtn = document.getElementById('syncBtn'); // Manual sync button
 
 // Load last displayed quote from sessionStorage
 let lastQuoteIndex = sessionStorage.getItem('lastQuoteIndex');
@@ -133,11 +134,53 @@ function importFromJsonFile(event) {
     fileReader.readAsText(event.target.files[0]);
 }
 
+// Fetch quotes from mock server (JSONPlaceholder)
+async function fetchServerQuotes() {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+        const data = await response.json();
+
+        return data.map(item => ({
+            text: item.title,
+            category: item.body || 'General'
+        }));
+    } catch (error) {
+        console.error('Failed to fetch server quotes:', error);
+        return [];
+    }
+}
+
+// Sync local quotes with server
+async function syncWithServer() {
+    const serverQuotes = await fetchServerQuotes();
+
+    let localChanged = false;
+
+    serverQuotes.forEach(serverQuote => {
+        const existsLocally = quotes.some(q => q.text === serverQuote.text && q.category === serverQuote.category);
+        if (!existsLocally) {
+            quotes.push(serverQuote);
+            localChanged = true;
+        }
+    });
+
+    if (localChanged) {
+        saveQuotes();
+        populateCategories();
+        alert('Local quotes updated with new data from server!');
+    }
+}
+
+// Periodic sync every 30 seconds
+setInterval(syncWithServer, 30000);
+
 // Event listeners
 newQuoteBtn.addEventListener('click', showRandomQuote);
 addQuoteBtn.addEventListener('click', addQuote);
 exportBtn.addEventListener('click', exportQuotes);
 importFile.addEventListener('change', importFromJsonFile);
+categoryFilter.addEventListener('change', filterQuotes);
+if (syncBtn) syncBtn.addEventListener('click', syncWithServer);
 
 // Populate categories on page load
 populateCategories();
